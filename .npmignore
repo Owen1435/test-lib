@@ -1,0 +1,13 @@
+.idea
+.eslintrc
+.gitignore
+.node_modules
+.npmrc
+.github
+README.md
+package-lock.json
+node_modules
+tsconfig.tsbuildinfo
+src
+contracts
+/prisma

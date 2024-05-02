@@ -1,1 +1,0 @@
-{"version":3,"file":"amqp-publish.hook.js","sourceRoot":"","sources":["../../src/hooks/amqp-publish.hook.ts"],"names":[],"mappings":";;;AAGO,MAAM,eAAe,GAA0C,CAAC,IAAU,EAAE,IAAiB,EAAE,EAAE;IACpG,IAAI,CAAC,UAAU,CAAC,gBAAgB,IAAI,CAAC,QAAQ,KAAK,IAAI,CAAC,UAAU,EAAE,CAAC,CAAC;AACzE,CAAC,CAAC;AAFW,QAAA,eAAe,mBAE1B"}

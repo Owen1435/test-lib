@@ -1,1 +1,0 @@
-{"version":3,"file":"kafka-publish.hook.js","sourceRoot":"","sources":["../../src/hooks/kafka-publish.hook.ts"],"names":[],"mappings":";;;AAGO,MAAM,gBAAgB,GAAyC,CAAC,IAAU,EAAE,KAAa,EAAE,EAAE;IAChG,IAAI,CAAC,UAAU,CAAC,iBAAiB,KAAK,EAAE,CAAC,CAAC;AAC9C,CAAC,CAAC;AAFW,QAAA,gBAAgB,oBAE3B"}

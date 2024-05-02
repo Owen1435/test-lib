@@ -1,7 +1,7 @@
 {
   "name": "@ppm/ppm-platform-opentelemetry",
   "version": "1.1.0",
-  "repository": "https://github.lmru.tech/adeo/lmru--ppm--platform-opentelemetry",
+  "repository": "https://github.com/Owen1435/test-lib",
   "description": "PPM platform common lib.",
   "license": "ISC",
   "main": "./build/index.js",
@@ -14,9 +14,11 @@
     "lint": "eslint \"src/**/*.ts\" --fix",
     "lint-pr": "eslint \"src/**/*.ts\" -f compact -o ./eslint-report"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@nestjs/common": "^10.3.8",
-    "@nestjs/core": "^10.3.8",
+    "@nestjs/core": "^10.3.8"
+  },
+  "dependencies": {
     "@opentelemetry/api": "^1.8.0",
     "@opentelemetry/context-async-hooks": "^1.24.0",
     "@opentelemetry/core": "^1.24.0",
