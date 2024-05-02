@@ -1,0 +1,1 @@
+{"version":3,"file":"default-telemetry.config.js","sourceRoot":"","sources":["../../src/configs/default-telemetry.config.ts"],"names":[],"mappings":";;;AAEa,QAAA,sBAAsB,GAAkC;IACjE,MAAM,EAAE;QACJ,oBAAoB,EAAE,IAAI;KAC7B;IACD,OAAO,EAAE;QACL,oBAAoB,EAAE,KAAK;QAC3B,kBAAkB,EAAE,KAAK;QACzB,iBAAiB,EAAE,KAAK;QACxB,+BAA+B,EAAE,KAAK;QACtC,sBAAsB,EAAE,EAAE;KAC7B;CACJ,CAAC"}

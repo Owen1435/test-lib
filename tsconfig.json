@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "target": "es2017",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "lib": ["es2017", "dom"],
+        "noImplicitAny": false,
+        "suppressImplicitAnyIndexErrors": true,
+        "baseUrl": "./src",
+        "outDir": "./build",
+        "removeComments": true,
+        "strictPropertyInitialization": false,
+        "strict": true,
+        "skipLibCheck": true,
+        "incremental": true
+    },
+    "exclude": ["node_modules", "contracts"]
+}
