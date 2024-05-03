@@ -1,5 +1,3 @@
-console.log('1')
-
 export * from './types';
 export * from './enums';
 export * from './interceptors';
