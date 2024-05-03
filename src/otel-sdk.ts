@@ -18,7 +18,9 @@ import { TTelemetryConfig } from './types';
 // import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 // import { PrismaMetricProducer } from './metric-producers';
+
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
@@ -48,44 +50,44 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
 
     const spanProcessors = [new BatchSpanProcessor(traceExporter, config.traces)];
 
-    const instrumentations = [
-        new NestInstrumentation(),
-        new HttpInstrumentation(),
-        new ExpressInstrumentation(),
-        // new PinoInstrumentation({
-        //     logKeys: {
-        //         traceId: 'traceId',
-        //         spanId: 'spanId',
-        //         traceFlags: 'traceFlags',
-        //     },
-        // }),
-        // new AmqplibInstrumentation({
-        //     consumeHook: amqpConsumeHook,
-        //     publishHook: amqpPublishHook,
-        // }),
-        // new PrismaInstrumentation({ middleware: true }),
-        // new KafkaJsInstrumentation({
-        //     consumerHook: kafkaConsumeHook,
-        //     producerHook: kafkaPublishHook,
-        // }),
-        // new RedisInstrumentation(),
-    ];
-
-    const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;
-    if (enabledInstrumentations) {
-        for (const instrumentation of instrumentations) {
-            if (!enabledInstrumentations.includes(instrumentation.instrumentationName as EInstrumentationName)) {
-                instrumentation.disable();
-            }
-        }
-    }
+    // const instrumentations = [
+    //     new NestInstrumentation(),
+    //     new HttpInstrumentation(),
+    //     new ExpressInstrumentation(),
+    //     // new PinoInstrumentation({
+    //     //     logKeys: {
+    //     //         traceId: 'traceId',
+    //     //         spanId: 'spanId',
+    //     //         traceFlags: 'traceFlags',
+    //     //     },
+    //     // }),
+    //     // new AmqplibInstrumentation({
+    //     //     consumeHook: amqpConsumeHook,
+    //     //     publishHook: amqpPublishHook,
+    //     // }),
+    //     // new PrismaInstrumentation({ middleware: true }),
+    //     // new KafkaJsInstrumentation({
+    //     //     consumerHook: kafkaConsumeHook,
+    //     //     producerHook: kafkaPublishHook,
+    //     // }),
+    //     // new RedisInstrumentation(),
+    // ];
+    //
+    // const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;
+    // if (enabledInstrumentations) {
+    //     for (const instrumentation of instrumentations) {
+    //         if (!enabledInstrumentations.includes(instrumentation.instrumentationName as EInstrumentationName)) {
+    //             instrumentation.disable();
+    //         }
+    //     }
+    // }
 
     const sdk = new NodeSDK({
         autoDetectResources: true,
         resource,
         spanProcessors,
         metricReader,
-        instrumentations,
+        instrumentations: [getNodeAutoInstrumentations()],
     });
 
     sdk.start();
