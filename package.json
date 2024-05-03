@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "@opentelemetry/api": "^1.8.0",
-    "nestjs-otel": "^5.1.5",
+    "nestjs-otel": "^5.1.5"
   },
   "dependencies": {
     "@opentelemetry/instrumentation": "^0.51.0",
