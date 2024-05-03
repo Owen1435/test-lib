@@ -1,5 +1,3 @@
-console.log('2')
-
 import { Resource } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -9,26 +7,22 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-// import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
-// import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
-// import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
-// import { PrismaInstrumentation } from '@prisma/instrumentation';
-// import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
+import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
+import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+import { PrismaInstrumentation } from '@prisma/instrumentation';
+import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-// import { Logger } from '@nestjs/common';
 import { TTelemetryConfig } from './types';
-// import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
+import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
-// import { PrismaMetricProducer } from './metric-producers';
+import { PrismaMetricProducer } from './metric-producers';
 
-console.log('3')
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
-    console.log('4')
     if (!config.enabled) {
-        // Logger.log('Telemetry disabled');
-        console.log('Telemetry disabled')
+        console.debug('Telemetry disabled')
         return;
     }
 
@@ -44,7 +38,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     const metricReader = new PeriodicExportingMetricReader({
         ...config.metrics,
         exporter: metricExporter,
-        // metricProducers: [new PrismaMetricProducer()],
+        metricProducers: [new PrismaMetricProducer()],
     });
 
     const traceExporter = new OTLPTraceExporter({
@@ -53,53 +47,48 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
 
     const spanProcessors = [new BatchSpanProcessor(traceExporter, config.traces)];
 
-    // const instrumentations = [
-    //     new NestInstrumentation(),
-    //     new HttpInstrumentation(),
-    //     new ExpressInstrumentation(),
-    //     // new PinoInstrumentation({
-    //     //     logKeys: {
-    //     //         traceId: 'traceId',
-    //     //         spanId: 'spanId',
-    //     //         traceFlags: 'traceFlags',
-    //     //     },
-    //     // }),
-    //     // new AmqplibInstrumentation({
-    //     //     consumeHook: amqpConsumeHook,
-    //     //     publishHook: amqpPublishHook,
-    //     // }),
-    //     // new PrismaInstrumentation({ middleware: true }),
-    //     // new KafkaJsInstrumentation({
-    //     //     consumerHook: kafkaConsumeHook,
-    //     //     producerHook: kafkaPublishHook,
-    //     // }),
-    //     // new RedisInstrumentation(),
-    // ];
-    //
-    // const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;
-    // if (enabledInstrumentations) {
-    //     for (const instrumentation of instrumentations) {
-    //         if (!enabledInstrumentations.includes(instrumentation.instrumentationName as EInstrumentationName)) {
-    //             instrumentation.disable();
-    //         }
-    //     }
-    // }
+    const instrumentations = [
+        new NestInstrumentation(),
+        new HttpInstrumentation(),
+        new ExpressInstrumentation(),
+        new PinoInstrumentation({
+            logKeys: {
+                traceId: 'traceId',
+                spanId: 'spanId',
+                traceFlags: 'traceFlags',
+            },
+        }),
+        new AmqplibInstrumentation({
+            consumeHook: amqpConsumeHook,
+            publishHook: amqpPublishHook,
+        }),
+        new PrismaInstrumentation({ middleware: true }),
+        new KafkaJsInstrumentation({
+            consumerHook: kafkaConsumeHook,
+            producerHook: kafkaPublishHook,
+        }),
+        new RedisInstrumentation(),
+    ];
+
+    const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;
+    if (enabledInstrumentations) {
+        for (const instrumentation of instrumentations) {
+            if (!enabledInstrumentations.includes(instrumentation.instrumentationName as EInstrumentationName)) {
+                instrumentation.disable();
+            }
+        }
+    }
 
     const sdk = new NodeSDK({
         autoDetectResources: true,
         resource,
         spanProcessors,
         metricReader,
-        instrumentations: [
-            new NestInstrumentation(),
-            new HttpInstrumentation(),
-            new ExpressInstrumentation(),
-        ],
+        instrumentations,
     });
 
     sdk.start();
-    // Logger.log(`Telemetry init with config: ${JSON.stringify(config)}`);
-    console.log(`Telemetry init with config: ${JSON.stringify(config)}`);
+    console.debug(`Telemetry init with config: ${JSON.stringify(config)}`);
 
     const signalHandler = () => {
         sdk.shutdown().then(() => console.log('shutdown')).finally(() => process.exit(0));
