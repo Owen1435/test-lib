@@ -18,7 +18,6 @@ import { TTelemetryConfig } from './types';
 // import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 // import { PrismaMetricProducer } from './metric-producers';
 
 
@@ -87,7 +86,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         resource,
         spanProcessors,
         metricReader,
-        instrumentations: [getNodeAutoInstrumentations()],
+        instrumentations: [],
     });
 
     sdk.start();
@@ -95,10 +94,84 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     console.log(`Telemetry init with config: ${JSON.stringify(config)}`);
 
     const signalHandler = () => {
-        sdk.shutdown().finally(() => process.exit(0));
+        sdk.shutdown().then(() => console.log('shutdown')).finally(() => process.exit(0));
     };
 
     process.on('SIGINT', signalHandler);
     process.on('SIGTERM', signalHandler);
     process.on('SIGQUIT', signalHandler);
 };
+
+const resource = new Resource({
+    [SEMRESATTRS_SERVICE_NAME]: 'chat',
+    [SEMRESATTRS_SERVICE_VERSION]: '13.0.0',
+});
+
+const metricExporter = new OTLPMetricExporter({
+    url: 'http://localhost:4318/v1/traces',
+});
+
+const metricReader = new PeriodicExportingMetricReader({
+    exporter: metricExporter,
+    // metricProducers: [new PrismaMetricProducer()],
+});
+
+const traceExporter = new OTLPTraceExporter({
+    url: 'http://localhost:4318/v1/traces',
+});
+
+const spanProcessors = [new BatchSpanProcessor(traceExporter, {scheduledDelayMillis: 500})];
+
+// const instrumentations = [
+//     new NestInstrumentation(),
+//     new HttpInstrumentation(),
+//     new ExpressInstrumentation(),
+//     // new PinoInstrumentation({
+//     //     logKeys: {
+//     //         traceId: 'traceId',
+//     //         spanId: 'spanId',
+//     //         traceFlags: 'traceFlags',
+//     //     },
+//     // }),
+//     // new AmqplibInstrumentation({
+//     //     consumeHook: amqpConsumeHook,
+//     //     publishHook: amqpPublishHook,
+//     // }),
+//     // new PrismaInstrumentation({ middleware: true }),
+//     // new KafkaJsInstrumentation({
+//     //     consumerHook: kafkaConsumeHook,
+//     //     producerHook: kafkaPublishHook,
+//     // }),
+//     // new RedisInstrumentation(),
+// ];
+//
+// const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;
+// if (enabledInstrumentations) {
+//     for (const instrumentation of instrumentations) {
+//         if (!enabledInstrumentations.includes(instrumentation.instrumentationName as EInstrumentationName)) {
+//             instrumentation.disable();
+//         }
+//     }
+// }
+
+const sdk = new NodeSDK({
+    autoDetectResources: true,
+    resource,
+    spanProcessors,
+    metricReader,
+    instrumentations: [
+            new NestInstrumentation(),
+            new HttpInstrumentation(),
+            new ExpressInstrumentation(),
+    ],
+});
+
+sdk.start();
+
+const signalHandler = () => {
+    sdk.shutdown().then(() => console.log('shutdown!!!!!!!!!!!')).finally(() => process.exit(0));
+};
+
+process.on('SIGINT', signalHandler);
+process.on('SIGTERM', signalHandler);
+process.on('SIGQUIT', signalHandler);
