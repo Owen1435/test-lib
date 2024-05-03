@@ -14,7 +14,7 @@ import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { Logger } from '@nestjs/common';
+// import { Logger } from '@nestjs/common';
 import { TTelemetryConfig } from './types';
 import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
@@ -23,7 +23,8 @@ import { PrismaMetricProducer } from './metric-producers';
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
-        Logger.log('Telemetry disabled');
+        // Logger.log('Telemetry disabled');
+        console.log('Telemetry disabled')
         return;
     }
 
@@ -90,7 +91,8 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     });
 
     sdk.start();
-    Logger.log(`Telemetry init with config: ${JSON.stringify(config)}`);
+    // Logger.log(`Telemetry init with config: ${JSON.stringify(config)}`);
+    console.log(`Telemetry init with config: ${JSON.stringify(config)}`);
 
     const signalHandler = () => {
         sdk.shutdown().finally(() => process.exit(0));
