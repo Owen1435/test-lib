@@ -9,20 +9,21 @@ import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
 import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
+import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { Logger } from '@nestjs/common';
 import { TTelemetryConfig } from './types';
 import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 
-
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
-        console.debug('Telemetry disabled')
+        Logger.log('Telemetry disabled');
         return;
     }
 
@@ -48,9 +49,9 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     const spanProcessors = [new BatchSpanProcessor(traceExporter, config.traces)];
 
     const instrumentations = [
-        new NestInstrumentation(),
         new HttpInstrumentation(),
-        new ExpressInstrumentation(),
+        new PgInstrumentation(),
+        new NestInstrumentation(),
         new PinoInstrumentation({
             logKeys: {
                 traceId: 'traceId',
@@ -58,6 +59,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
                 traceFlags: 'traceFlags',
             },
         }),
+        new ExpressInstrumentation(),
         new AmqplibInstrumentation({
             consumeHook: amqpConsumeHook,
             publishHook: amqpPublishHook,
@@ -88,10 +90,10 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     });
 
     sdk.start();
-    console.debug(`Telemetry init with config: ${JSON.stringify(config)}`);
+    Logger.log(`Telemetry init with config: ${JSON.stringify(config)}`);
 
     const signalHandler = () => {
-        sdk.shutdown().then(() => console.log('shutdown')).finally(() => process.exit(0));
+        sdk.shutdown().finally(() => process.exit(0));
     };
 
     process.on('SIGINT', signalHandler);

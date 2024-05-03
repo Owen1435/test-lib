@@ -16,12 +16,27 @@ PPM platform opentelemetry module.
 ## Integration to service
 
 ### Init opentelemetry
-1. Add the configuration file to the service 
+1. Add the configuration file to the service
+```typescript
+// The imports here should look exactly like this
+import { TTelemetryConfig } from '@ppm/ppm-platform-opentelemetry/build/types';
+import { EInstrumentationName } from '@ppm/ppm-platform-opentelemetry/build/enums';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
+
+export const telemetryConfig: TTelemetryConfig = {
+    serviceName: packageInfo.name,
+    version: packageInfo.version,
+    enabled: process.env.OTEL_ENABLED === 'true',
+    //...
+};
+```
 2. Add this code to the top of the main.ts, use eslint-disable when necessary 
 ```typescript
 /* eslint-disable import/order */
 // This code must be exactly here
-import { initOtelSDK } from '@ppm/ppm-platform-opentelemetry';
+import { initOtelSDK } from '@ppm/ppm-platform-opentelemetry/build/otel-sdk';
 import { telemetryConfig } from './configs/telemetry.config';
 initOtelSDK(telemetryConfig);
 ```
