@@ -16,7 +16,9 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0",
+    "@nestjs/core": "^9.0.0"
+  },
+  "dependencies": {
     "@opentelemetry/api": "^1.8.0",
     "@opentelemetry/context-async-hooks": "^1.24.0",
     "@opentelemetry/core": "^1.24.0",
@@ -40,8 +42,6 @@
     "nestjs-otel": "^5.1.5",
     "nestjs-rmq": "^2.13.0",
     "opentelemetry-instrumentation-kafkajs": "^0.40.0"
-  },
-  "dependencies": {
   },
   "devDependencies": {
     "@prisma/client": "^5.13.0",
