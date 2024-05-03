@@ -1,3 +1,5 @@
+console.log('1')
+
 export * from './otel-sdk';
 export * from './telemetry.module';
 export * from './types';

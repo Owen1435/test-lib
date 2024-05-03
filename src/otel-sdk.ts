@@ -1,3 +1,5 @@
+console.log('2')
+
 import { Resource } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -20,8 +22,10 @@ import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 // import { PrismaMetricProducer } from './metric-producers';
 
+console.log('3')
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
+    console.log('4')
     if (!config.enabled) {
         // Logger.log('Telemetry disabled');
         console.log('Telemetry disabled')
