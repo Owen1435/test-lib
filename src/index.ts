@@ -4,4 +4,4 @@ export * from './interceptors';
 export * from './metric-producers';
 export * from './telemetry.module';
 
-// export * from 'nestjs-otel';
+export * from 'nestjs-otel';
