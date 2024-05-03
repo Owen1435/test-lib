@@ -6,10 +6,9 @@ import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-// import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 // import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
 // import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
-// import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
 // import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 // import { PrismaInstrumentation } from '@prisma/instrumentation';
 // import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
@@ -50,9 +49,9 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     const spanProcessors = [new BatchSpanProcessor(traceExporter, config.traces)];
 
     const instrumentations = [
-        new HttpInstrumentation(),
-        // new PgInstrumentation(),
         new NestInstrumentation(),
+        new HttpInstrumentation(),
+        new ExpressInstrumentation(),
         // new PinoInstrumentation({
         //     logKeys: {
         //         traceId: 'traceId',
@@ -60,7 +59,6 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         //         traceFlags: 'traceFlags',
         //     },
         // }),
-        // new ExpressInstrumentation(),
         // new AmqplibInstrumentation({
         //     consumeHook: amqpConsumeHook,
         //     publishHook: amqpPublishHook,
