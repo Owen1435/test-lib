@@ -6,20 +6,20 @@ import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
-import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
-import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
-import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
-import { PrismaInstrumentation } from '@prisma/instrumentation';
-import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
+// import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+// import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
+// import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
+// import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
+// import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+// import { PrismaInstrumentation } from '@prisma/instrumentation';
+// import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 // import { Logger } from '@nestjs/common';
 import { TTelemetryConfig } from './types';
-import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
+// import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
-import { PrismaMetricProducer } from './metric-producers';
+// import { PrismaMetricProducer } from './metric-producers';
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
@@ -40,7 +40,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     const metricReader = new PeriodicExportingMetricReader({
         ...config.metrics,
         exporter: metricExporter,
-        metricProducers: [new PrismaMetricProducer()],
+        // metricProducers: [new PrismaMetricProducer()],
     });
 
     const traceExporter = new OTLPTraceExporter({
@@ -51,26 +51,26 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
 
     const instrumentations = [
         new HttpInstrumentation(),
-        new PgInstrumentation(),
+        // new PgInstrumentation(),
         new NestInstrumentation(),
-        new PinoInstrumentation({
-            logKeys: {
-                traceId: 'traceId',
-                spanId: 'spanId',
-                traceFlags: 'traceFlags',
-            },
-        }),
-        new ExpressInstrumentation(),
-        new AmqplibInstrumentation({
-            consumeHook: amqpConsumeHook,
-            publishHook: amqpPublishHook,
-        }),
-        new PrismaInstrumentation({ middleware: true }),
-        new KafkaJsInstrumentation({
-            consumerHook: kafkaConsumeHook,
-            producerHook: kafkaPublishHook,
-        }),
-        new RedisInstrumentation(),
+        // new PinoInstrumentation({
+        //     logKeys: {
+        //         traceId: 'traceId',
+        //         spanId: 'spanId',
+        //         traceFlags: 'traceFlags',
+        //     },
+        // }),
+        // new ExpressInstrumentation(),
+        // new AmqplibInstrumentation({
+        //     consumeHook: amqpConsumeHook,
+        //     publishHook: amqpPublishHook,
+        // }),
+        // new PrismaInstrumentation({ middleware: true }),
+        // new KafkaJsInstrumentation({
+        //     consumerHook: kafkaConsumeHook,
+        //     producerHook: kafkaPublishHook,
+        // }),
+        // new RedisInstrumentation(),
     ];
 
     const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;
