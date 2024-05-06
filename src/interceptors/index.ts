@@ -1,1 +1,1 @@
-export * from './rmq-trace.interceptor-factory';
+export * from './rmq-trace.interceptor';
