@@ -1,11 +1,12 @@
 import { OpenTelemetryModule } from 'nestjs-otel';
-import { DynamicModule, Global, Module } from '@nestjs/common';
+import { DynamicModule, Global, MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TTelemetryConfig } from './types';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
+import { ResponseTraceIdMiddleware } from './middlewares';
 
 @Global()
 @Module({})
-export class TelemetryModule {
+export class TelemetryModule implements NestModule {
     public static forRoot(config: TTelemetryConfig): DynamicModule {
         return {
             module: TelemetryModule,
@@ -23,5 +24,9 @@ export class TelemetryModule {
             ],
             exports: [OpenTelemetryModule],
         };
+    }
+
+    public configure(consumer: MiddlewareConsumer): void {
+        consumer.apply(ResponseTraceIdMiddleware).forRoutes('*');
     }
 }

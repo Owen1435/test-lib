@@ -1,5 +1,5 @@
 import { Resource } from '@opentelemetry/resources';
-import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_NAMESPACE, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
@@ -20,6 +20,9 @@ import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } 
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
+import { CommonSampler } from './samplers';
+import { detectResourcesSync } from '@opentelemetry/resources';
+import { containerDetector } from '@opentelemetry/resource-detector-container';
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
@@ -27,10 +30,15 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         return;
     }
 
-    const resource = new Resource({
-        [SEMRESATTRS_SERVICE_NAME]: config.serviceName,
-        [SEMRESATTRS_SERVICE_VERSION]: config.version,
-    });
+    const resource = detectResourcesSync({
+        detectors: [containerDetector],
+    }).merge(
+        new Resource({
+            [SEMRESATTRS_SERVICE_NAME]: config.serviceName,
+            [SEMRESATTRS_SERVICE_VERSION]: config.version,
+            [SEMRESATTRS_SERVICE_NAMESPACE]: config.env,
+        }),
+    );
 
     const metricExporter = new OTLPMetricExporter({
         url: config.metrics.collectorUrl,
@@ -83,6 +91,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
 
     const sdk = new NodeSDK({
         autoDetectResources: true,
+        sampler: new CommonSampler(config.sampling),
         resource,
         spanProcessors,
         metricReader,
