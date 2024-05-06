@@ -1,9 +1,10 @@
 import { Sampler, SamplingDecision, SamplingResult } from '@opentelemetry/sdk-trace-base';
 import { Attributes, Context, Link, SpanKind } from '@opentelemetry/api';
-import { HttpRequestSampler } from './http-request.sampler';
 import { TSamplingOptions } from '../types';
+import { HttpRequestSampler } from './http-request.sampler';
 import { RmqRequestSampler } from './rmq-request.sampler';
 
+/** CommonSampler execute all samplers from pool, record trace if all samplers return RECORD_AND_SAMPLED */
 export class CommonSampler implements Sampler {
     private readonly samplers: Sampler[] = [];
 

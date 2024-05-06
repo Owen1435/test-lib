@@ -7,6 +7,10 @@ import { ResponseTraceIdMiddleware } from './middlewares';
 @Global()
 @Module({})
 export class TelemetryModule implements NestModule {
+    public configure(consumer: MiddlewareConsumer): void {
+        consumer.apply(ResponseTraceIdMiddleware).forRoutes('*');
+    }
+
     public static forRoot(config: TTelemetryConfig): DynamicModule {
         return {
             module: TelemetryModule,
@@ -24,9 +28,5 @@ export class TelemetryModule implements NestModule {
             ],
             exports: [OpenTelemetryModule],
         };
-    }
-
-    public configure(consumer: MiddlewareConsumer): void {
-        consumer.apply(ResponseTraceIdMiddleware).forRoutes('*');
     }
 }

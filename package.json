@@ -1,6 +1,6 @@
 {
   "name": "@ppm/ppm-platform-opentelemetry",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "repository": "https://github.com/Owen1435/test-lib",
   "description": "PPM platform common lib.",
   "license": "ISC",
@@ -15,8 +15,8 @@
     "lint-pr": "eslint \"src/**/*.ts\" -f compact -o ./eslint-report"
   },
   "peerDependencies": {
-    "@nestjs/common": "^9.0.0",
-    "@nestjs/core": "^9.0.0"
+    "@nestjs/common": ">=8.0.0",
+    "@nestjs/core": ">=8.0.0"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.8.0",

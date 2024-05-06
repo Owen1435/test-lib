@@ -1,4 +1,4 @@
-import { Resource } from '@opentelemetry/resources';
+import { Resource , detectResourcesSync } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_NAMESPACE, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
@@ -15,14 +15,13 @@ import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { Logger } from '@nestjs/common';
+import { containerDetector } from '@opentelemetry/resource-detector-container';
 import { TTelemetryConfig } from './types';
 import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
-import { detectResourcesSync } from '@opentelemetry/resources';
-import { containerDetector } from '@opentelemetry/resource-detector-container';
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
