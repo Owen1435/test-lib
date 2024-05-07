@@ -1,4 +1,4 @@
-import { Resource , detectResourcesSync } from '@opentelemetry/resources';
+import { Resource, detectResourcesSync } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME, SEMRESATTRS_SERVICE_NAMESPACE, SEMRESATTRS_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
@@ -16,8 +16,9 @@ import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { Logger } from '@nestjs/common';
 import { containerDetector } from '@opentelemetry/resource-detector-container';
+import { FsInstrumentation } from '@opentelemetry/instrumentation-fs';
 import { TTelemetryConfig } from './types';
-import { amqpConsumeHook, amqpPublishHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
+import { amqpConsumeHook, amqpPublishHook, fsCreateHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
@@ -33,7 +34,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         detectors: [containerDetector],
     }).merge(
         new Resource({
-            [SEMRESATTRS_SERVICE_NAME]: config.serviceName,
+            [SEMRESATTRS_SERVICE_NAME]: `ppmru:${config.serviceName}`,
             [SEMRESATTRS_SERVICE_VERSION]: config.version,
             [SEMRESATTRS_SERVICE_NAMESPACE]: config.env,
         }),
@@ -77,6 +78,10 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
             producerHook: kafkaPublishHook,
         }),
         new RedisInstrumentation(),
+        new FsInstrumentation({
+            createHook: fsCreateHook(config.sampling?.fs),
+            requireParentSpan: true,
+        }),
     ];
 
     const enabledInstrumentations = config.instrumentations || defaultTelemetryConfig.instrumentations;

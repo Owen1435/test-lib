@@ -8,6 +8,7 @@ export class ResponseTraceIdMiddleware implements NestMiddleware {
 
     public use(req: Request, res: Response, next: NextFunction) {
         const traceId = this.traceService.getSpan()?.spanContext().traceId;
+        console.log('ResponseTraceIdMiddleware', traceId);
         if (traceId) {
             res.set('X-Trace-Id', traceId);
         }

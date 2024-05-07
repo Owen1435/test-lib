@@ -11,6 +11,14 @@ PPM platform opentelemetry module.
 
 # Usage
 
+In OpenTelemetry for Node.js, auto-instrumentation is based on the mechanism of function hooking. This allows for the automatic integration of libraries without requiring modifications to their source code.
+
+> (IMPORTNANT) 
+> The instrumentation setup and configuration must be run before your application code. 
+> Before any other module in your application is loaded, you must initialize the SDK. 
+> If you fail to initialize the SDK or initialize it too late, no-op implementations will be provided to any library.
+> https://opentelemetry.io/docs/languages/js/instrumentation/
+
 > For using nestjs-otel lib decorators and services you should import them from this packages
 
 ## Integration to service
@@ -18,7 +26,11 @@ PPM platform opentelemetry module.
 ### Init opentelemetry
 1. Add the configuration file to the service
 ```typescript
-// The imports here should look exactly like this
+/** The imports here should look exactly like this. 
+ * The OpenTelemetry SDK is not initialized yet. Importing from the index file, which re-exports all modules of the library, violates the rule that "OpenTelemetry must be initialized before loading other modules of the application". Some instrumentations will not work correctly. 
+ * @link: https://github.lmru.tech/adeo/lmru--ppm--platform--opentelemetry
+ * @link: https://opentelemetry.io/docs/languages/js/instrumentation/
+ */
 import { TTelemetryConfig } from '@ppm/ppm-platform-opentelemetry/build/types';
 import { EInstrumentationName } from '@ppm/ppm-platform-opentelemetry/build/enums';
 
@@ -35,7 +47,11 @@ export const telemetryConfig: TTelemetryConfig = {
 2. Add this code to the top of the main.ts, use eslint-disable when necessary 
 ```typescript
 /* eslint-disable import/order */
-// This code must be exactly here
+/** This code must be exactly here.
+ * In OpenTelemetry for Node.js, instrumentation is based on the mechanism of function hooking. Before any other module in your application is loaded, you must initialize the SDK. If you fail to initialize the SDK or initialize it too late, no-op implementations will be provided to any library.
+ * @link: https://github.lmru.tech/adeo/lmru--ppm--platform--opentelemetry
+ * @link: https://opentelemetry.io/docs/languages/js/instrumentation/
+ */
 import { initOtelSDK } from '@ppm/ppm-platform-opentelemetry/build/otel-sdk';
 import { telemetryConfig } from './configs/telemetry.config';
 initOtelSDK(telemetryConfig);

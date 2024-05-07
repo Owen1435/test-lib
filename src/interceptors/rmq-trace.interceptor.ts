@@ -5,7 +5,7 @@ import { SpanStatusCode, trace } from '@opentelemetry/api';
 export class RMQTraceIntercepter extends RMQIntercepterClass {
     public intercept(res: any, msg: Message, error?: Error): Promise<any> {
         if (error) {
-            const span = trace.getActiveSpan()
+            const span = trace.getActiveSpan();
             span?.setStatus({ code: SpanStatusCode.ERROR, message: error.message });
             span?.addEvent('exception', {
                 ['exception.message']: error.message,

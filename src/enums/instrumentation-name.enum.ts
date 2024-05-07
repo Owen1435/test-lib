@@ -8,4 +8,5 @@ export enum EInstrumentationName {
     Redis = '@opentelemetry/instrumentation-redis',
     Kafka = 'opentelemetry-instrumentation-kafkajs',
     Prisma = '@prisma/instrumentation',
+    Fs = '@opentelemetry/instrumentation-fs',
 }
