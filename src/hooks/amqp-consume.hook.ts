@@ -1,7 +1,8 @@
-import { Span } from '@opentelemetry/api';
+import { Span, trace } from '@opentelemetry/api';
 import { AmqplibConsumeCustomAttributeFunction, ConsumeInfo } from '@opentelemetry/instrumentation-amqplib';
 
 export const amqpConsumeHook: AmqplibConsumeCustomAttributeFunction = (span: Span, info: ConsumeInfo) => {
+    console.log('amqpPublishHook_', info, trace.getActiveSpan());
     if (info.msg.fields.routingKey.includes('amq.rabbitmq.reply-to')) {
         span.updateName(`AMQP consume reply message`);
         return;
