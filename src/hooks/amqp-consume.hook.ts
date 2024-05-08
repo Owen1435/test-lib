@@ -3,7 +3,7 @@ import { AmqplibConsumeCustomAttributeFunction, ConsumeInfo } from '@opentelemet
 
 export const amqpConsumeHook: AmqplibConsumeCustomAttributeFunction = (span: Span, info: ConsumeInfo) => {
     console.log('amqpConsumeHook_', info, trace.getActiveSpan());
-    console.log(trace.getTracer('default'));
+    console.log(span);
     if (info.msg.fields.routingKey.includes('amq.rabbitmq.reply-to')) {
         span.updateName(`AMQP consume reply message`);
         return;
