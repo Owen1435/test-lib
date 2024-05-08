@@ -5,6 +5,8 @@ export const amqpPublishHook: AmqplibPublishCustomAttributeFunction = (span: Spa
     console.log('amqpPublishHook_', info, trace.getActiveSpan());
     if (info.routingKey.includes('amq.rabbitmq.reply-to')) {
         span.updateName(`AMQP publish reply message`);
+        console.log((trace.getActiveSpan() as any)?.resource?.attributes?.['service.name']);
+        span.setAttribute('amq.app.name', (trace.getActiveSpan() as any)?.resource?.attributes?.['service.name']);
         return;
     }
 
