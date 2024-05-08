@@ -2,7 +2,7 @@ import { Span, trace } from '@opentelemetry/api';
 import { AmqplibPublishCustomAttributeFunction, PublishInfo } from '@opentelemetry/instrumentation-amqplib';
 
 export const amqpPublishHook: AmqplibPublishCustomAttributeFunction = (span: Span, info: PublishInfo) => {
-    console.log('amqpPublishHook_', info, trace.getActiveSpan()?.spanContext());
+    console.log('amqpPublishHook_', info, trace.getActiveSpan());
     if (info.routingKey.includes('amq.rabbitmq.reply-to')) {
         span.updateName(`AMQP publish reply message`);
         return;
