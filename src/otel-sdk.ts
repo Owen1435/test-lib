@@ -23,6 +23,8 @@ import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
+import {Span} from "@opentelemetry/api";
+import {ConsumeEndInfo, PublishConfirmedInfo} from "@opentelemetry/instrumentation-amqplib/build/src/types";
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
@@ -71,6 +73,12 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         new AmqplibInstrumentation({
             consumeHook: amqpConsumeHook,
             publishHook: amqpPublishHook,
+            publishConfirmHook: (span: Span, publishConfirmedInto: PublishConfirmedInfo) => {
+                console.log('publishConfirmHook', span, publishConfirmedInto)
+            },
+            consumeEndHook: (span: Span, publishConfirmedInto: ConsumeEndInfo) => {
+                console.log('consumeEndHook', span, publishConfirmedInto)
+            },
         }),
         new PrismaInstrumentation({ middleware: true }),
         new KafkaJsInstrumentation({
