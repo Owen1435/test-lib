@@ -4,8 +4,6 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { AmqplibInstrumentation } from '@opentelemetry/instrumentation-amqplib';
 import { KafkaJsInstrumentation } from 'opentelemetry-instrumentation-kafkajs';
@@ -13,18 +11,17 @@ import { PgInstrumentation } from '@opentelemetry/instrumentation-pg';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { PrismaInstrumentation } from '@prisma/instrumentation';
 import { RedisInstrumentation } from '@opentelemetry/instrumentation-redis';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import {BatchSpanProcessor} from '@opentelemetry/sdk-trace-base';
 import { Logger } from '@nestjs/common';
 import { containerDetector } from '@opentelemetry/resource-detector-container';
 import { FsInstrumentation } from '@opentelemetry/instrumentation-fs';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { TTelemetryConfig } from './types';
 import { amqpConsumeHook, amqpPublishHook, fsCreateHook, kafkaConsumeHook, kafkaPublishHook } from './hooks';
 import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
-import {Span} from "@opentelemetry/api";
-import {ConsumeEndInfo, PublishConfirmedInfo} from "@opentelemetry/instrumentation-amqplib/build/src/types";
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
@@ -42,15 +39,18 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         }),
     );
 
-    const metricExporter = new OTLPMetricExporter({
-        url: config.metrics.collectorUrl,
-    });
-
-    const metricReader = new PeriodicExportingMetricReader({
-        ...config.metrics,
-        exporter: metricExporter,
-        metricProducers: [new PrismaMetricProducer()],
-    });
+    const prometheusPort = config.metrics.port || 9464;
+    const prometheusEndpoint = config.metrics.endpoint || '/metrics';
+    const metricReader = new PrometheusExporter(
+        {
+            port: prometheusPort,
+            endpoint: prometheusEndpoint,
+            metricProducers: [new PrismaMetricProducer()],
+        },
+        () => {
+            Logger.log(`Prometheus scrape endpoint: http://localhost:${prometheusPort}${prometheusEndpoint}`);
+        },
+    );
 
     const traceExporter = new OTLPTraceExporter({
         url: config.traces.collectorUrl,
@@ -73,12 +73,6 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
         new AmqplibInstrumentation({
             consumeHook: amqpConsumeHook,
             publishHook: amqpPublishHook,
-            publishConfirmHook: (span: Span, publishConfirmedInto: PublishConfirmedInfo) => {
-                console.log('publishConfirmHook', span, publishConfirmedInto)
-            },
-            consumeEndHook: (span: Span, publishConfirmedInto: ConsumeEndInfo) => {
-                console.log('consumeEndHook', span, publishConfirmedInto)
-            },
         }),
         new PrismaInstrumentation({ middleware: true }),
         new KafkaJsInstrumentation({

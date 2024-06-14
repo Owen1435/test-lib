@@ -15,7 +15,8 @@ export type TTelemetryConfig = {
         collectorUrl: string;
     };
     metrics: Pick<PeriodicExportingMetricReaderOptions, 'exportIntervalMillis' | 'exportTimeoutMillis'> & {
-        collectorUrl: string;
+        port?: number;
+        endpoint?: string;
         hostMetricsEnabled: boolean;
         apiMetricsEnabled: boolean;
         apiMetricsIgnoreRoutes: string[];
