@@ -2,7 +2,7 @@ import { metrics, ValueType } from '@opentelemetry/api';
 
 export const APPLICATION_METRIC_PREFIX = 'app';
 
-const meter = metrics.getMeterProvider().getMeter('nestjs-otel');
+const meter = metrics.getMeterProvider().getMeter('app');
 
 export type TKafkaTopicProduceCountMetricAttributes = {
     topic: string;
