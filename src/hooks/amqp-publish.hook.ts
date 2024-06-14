@@ -8,6 +8,8 @@ export const amqpPublishHook: AmqplibPublishCustomAttributeFunction = (span: Spa
         return;
     }
 
+    console.log(span);
+
     rmqQueueProduceCountMetric.add(1, {exchange: info.exchange, routingKey: info.routingKey});
     span.updateName(`AMQP publish ${info.exchange}->${info.routingKey}`);
 };
