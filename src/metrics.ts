@@ -19,6 +19,7 @@ export let kafkaTopicConsumeCountMetric: Counter<TKafkaTopicConsumeCountMetricAt
 export type TRmqQueueProduceCountMetricAttributes = {
     exchange: string;
     routingKey: string;
+    producer_service: string;
 };
 
 /** The number of produce messages count to rabbit queue */
