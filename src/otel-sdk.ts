@@ -22,6 +22,7 @@ import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
+import './metrics'
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
