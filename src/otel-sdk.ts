@@ -22,12 +22,9 @@ import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
-import {metrics} from "@opentelemetry/api";
+import { Meter, metrics } from "@opentelemetry/api";
 
-console.log(metrics.getMeterProvider())
-console.log(metrics.getMeterProvider().getMeter('app'))
-
-export const meter = metrics.getMeterProvider().getMeter('app');
+export let meter: Meter
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
@@ -111,6 +108,7 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     });
 
     sdk.start();
+    meter = metrics.getMeterProvider().getMeter('app');
     Logger.log(`Telemetry init with config: ${JSON.stringify(config)}`);
 
     const signalHandler = () => {
@@ -120,10 +118,4 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     process.on('SIGINT', signalHandler);
     process.on('SIGTERM', signalHandler);
     process.on('SIGQUIT', signalHandler);
-
-    console.log('2', metrics.getMeterProvider())
-    console.log('3', metrics.getMeterProvider().getMeter('app'))
 };
-
-console.log('1', metrics.getMeterProvider())
-console.log('1', metrics.getMeterProvider().getMeter('app'))
