@@ -121,3 +121,6 @@ export const initOtelSDK = (config: TTelemetryConfig) => {
     process.on('SIGTERM', signalHandler);
     process.on('SIGQUIT', signalHandler);
 };
+
+console.log('1', metrics.getMeterProvider())
+console.log('1', metrics.getMeterProvider().getMeter('app'))
