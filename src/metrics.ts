@@ -1,8 +1,7 @@
-import { metrics, ValueType } from '@opentelemetry/api';
+import { ValueType } from '@opentelemetry/api';
+import { meter } from "./otel-sdk";
 
 export const APPLICATION_METRIC_PREFIX = 'app';
-
-const meter = metrics.getMeterProvider().getMeter('app');
 
 export type TKafkaTopicProduceCountMetricAttributes = {
     topic: string;

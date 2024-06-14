@@ -22,7 +22,9 @@ import { defaultTelemetryConfig } from './configs/default-telemetry.config';
 import { EInstrumentationName } from './enums';
 import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
-import './metrics'
+import {metrics} from "@opentelemetry/api";
+
+export const meter = metrics.getMeterProvider().getMeter('app');
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
     if (!config.enabled) {
