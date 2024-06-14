@@ -24,6 +24,9 @@ import { PrismaMetricProducer } from './metric-producers';
 import { CommonSampler } from './samplers';
 import {metrics} from "@opentelemetry/api";
 
+console.log(metrics.getMeterProvider())
+console.log(metrics.getMeterProvider().getMeter('app'))
+
 export const meter = metrics.getMeterProvider().getMeter('app');
 
 export const initOtelSDK = (config: TTelemetryConfig) => {
